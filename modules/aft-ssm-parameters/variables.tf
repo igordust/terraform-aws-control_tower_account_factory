@@ -138,11 +138,19 @@ variable "account_request_repo_branch" {
   type = string
 }
 
+variable "account_request_s3_bucket" {
+  type = string
+}
+
 variable "account_provisioning_customizations_repo_name" {
   type = string
 }
 
 variable "account_provisioning_customizations_repo_branch" {
+  type = string
+}
+
+variable "account_provisioning_customizations_s3_bucket" {
   type = string
 }
 
@@ -214,11 +222,19 @@ variable "global_customizations_repo_branch" {
   type = string
 }
 
+variable "global_customizations_s3_bucket" {
+  type = string
+}
+
 variable "account_customizations_repo_name" {
   type = string
 }
 
 variable "account_customizations_repo_branch" {
+  type = string
+}
+
+variable "account_customizations_s3_bucket" {
   type = string
 }
 

@@ -29,6 +29,19 @@ data "aws_ssm_parameter" "aft_account_customizations_repo_branch" {
   name = "/aft/config/account-customizations/repo-branch"
 }
 
+data "aws_ssm_parameter" "account_request_s3_bucket" {
+  name = "/aft/config/account-request/source_s3_bucket"
+}
+data "aws_ssm_parameter" "account_provisioning_customizations_s3_bucket" {
+  name = "/aft/config/account-provisioning-customizations/source_s3_bucket"
+}
+data "aws_ssm_parameter" "global_customizations_s3_bucket" {
+  name = "/aft/config/global-customizations/source_s3_bucket"
+}
+data "aws_ssm_parameter" "account_customizations_s3_bucket" {
+  name = "/aft/config/account-customizations/source_s3_bucket"
+}
+
 # Lookups from terraform-aws-aft-pipeline-framework customizations module
 data "aws_kms_alias" "aft_key" {
   name = "alias/aft"

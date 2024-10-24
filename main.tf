@@ -251,6 +251,7 @@ module "aft_ssm_parameters" {
   terraform_api_endpoint                                      = var.terraform_api_endpoint
   account_request_repo_branch                                 = var.account_request_repo_branch
   account_request_repo_name                                   = var.account_request_repo_name
+  account_request_s3_bucket                                   = module.aft_code_repositories.account_request_s3_bucket
   vcs_provider                                                = var.vcs_provider
   aft_config_backend_primary_region                           = var.ct_home_region
   aft_config_backend_secondary_region                         = var.tf_backend_secondary_region
@@ -263,10 +264,13 @@ module "aft_ssm_parameters" {
   aft_feature_enterprise_support                              = var.aft_feature_enterprise_support
   aft_feature_delete_default_vpcs_enabled                     = var.aft_feature_delete_default_vpcs_enabled
   account_customizations_repo_name                            = var.account_customizations_repo_name
+  account_customizations_s3_bucket                            = module.aft_code_repositories.account_customizations_s3_bucket
   account_customizations_repo_branch                          = var.account_customizations_repo_branch
   global_customizations_repo_name                             = var.global_customizations_repo_name
+  global_customizations_s3_bucket                             = module.aft_code_repositories.global_customizations_s3_bucket
   global_customizations_repo_branch                           = var.global_customizations_repo_branch
   account_provisioning_customizations_repo_name               = var.account_provisioning_customizations_repo_name
+  account_provisioning_customizations_s3_bucket               = module.aft_code_repositories.account_provisioning_customizations_s3_bucket
   account_provisioning_customizations_repo_branch             = var.account_provisioning_customizations_repo_branch
   maximum_concurrent_customizations                           = var.maximum_concurrent_customizations
   github_enterprise_url                                       = var.github_enterprise_url
