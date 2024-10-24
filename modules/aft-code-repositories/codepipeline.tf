@@ -111,7 +111,7 @@ resource "aws_cloudwatch_event_target" "account_request" {
 ##############################################################
 
 resource "aws_codepipeline" "codestar_account_request" {
-  count    = local.vcs.is_codecommit ? 0 : 1
+  count    = local.is_codestar ? 1 : 0
   name     = "ct-aft-account-request"
   role_arn = aws_iam_role.account_request_codepipeline_role.arn
 
@@ -170,6 +170,112 @@ resource "aws_codepipeline" "codestar_account_request" {
     }
   }
 }
+
+##############################################################
+# S3 - account-request
+##############################################################
+
+resource "aws_codepipeline" "s3_account_request" {
+  count    = local.vcs.is_s3 ? 1 : 0
+  name     = "ct-aft-account-request"
+  role_arn = aws_iam_role.account_request_codepipeline_role.arn
+
+  artifact_store {
+    location = var.codepipeline_s3_bucket_name
+    type     = "S3"
+
+    encryption_key {
+      id   = var.aft_key_arn
+      type = "KMS"
+    }
+  }
+
+  ##############################################################
+  # Source
+  ##############################################################
+  stage {
+    name = "Source"
+
+    action {
+      name             = "account-request"
+      category         = "Source"
+      owner            = "AWS"
+      provider         = "S3"
+      version          = "1"
+      output_artifacts = ["account-request"]
+
+      configuration = {
+        S3Bucket             = aws_s3_bucket.account_request[0].bucket
+        S3ObjectKey          = local.s3_archive_filename
+        PollForSourceChanges = false
+      }
+    }
+  }
+
+  ##############################################################
+  # Apply Account Request
+  ##############################################################
+  stage {
+    name = "terraform-apply"
+
+    action {
+      name             = "Apply-Terraform"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      input_artifacts  = ["account-request"]
+      output_artifacts = ["account-request-terraform"]
+      version          = "1"
+      run_order        = "2"
+      configuration = {
+        ProjectName = aws_codebuild_project.account_request.name
+      }
+    }
+  }
+}
+
+# Trigger Pipeline on Commit
+resource "aws_cloudwatch_event_rule" "s3_account_request" {
+  count       = local.vcs.is_s3 ? 1 : 0
+  name        = "aft-account-request-codepipeline-trigger"
+  description = "Trigger CodePipeline upon upload to S3"
+
+  event_pattern = <<EOF
+{
+  "source": [
+    "aws.s3"
+  ],
+  "detail-type": [
+    "Object Created"
+  ],
+  "detail": {
+    "eventSource": [ "s3.amazonaws.com" ],
+    "eventName": [
+      "CopyObject",
+      "PutObject",
+      "CompleteMultipartUpload"
+    ],
+    "requestParameters": {
+      "bucketName": [
+          "${aws_s3_bucket.account_request[0].bucket}"
+      ],
+      "key": [
+          "${local.s3_archive_filename}"
+      ]
+  }
+  }
+}
+EOF
+}
+
+resource "aws_cloudwatch_event_target" "s3_account_request" {
+  count     = local.vcs.is_s3 ? 1 : 0
+  target_id = "codepipeline"
+  rule      = aws_cloudwatch_event_rule.s3_account_request[0].name
+  arn       = aws_codepipeline.s3_account_request[0].arn
+  role_arn  = aws_iam_role.cloudwatch_events_codepipeline_role[0].arn
+}
+
 
 ##############################################################
 # CodeCommit - account-provisioning-customizations
@@ -242,7 +348,7 @@ resource "aws_codepipeline" "codecommit_account_provisioning_customizations" {
 ##############################################################
 
 resource "aws_codepipeline" "codestar_account_provisioning_customizations" {
-  count    = local.vcs.is_codecommit ? 0 : 1
+  count    = local.is_codestar ? 1 : 0
   name     = "ct-aft-account-provisioning-customizations"
   role_arn = aws_iam_role.account_provisioning_customizations_codepipeline_role.arn
 

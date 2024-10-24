@@ -21,6 +21,33 @@ resource "aws_iam_role_policy" "account_request_codepipeline_policy" {
   })
 }
 
+resource "aws_iam_role_policy" "account_request_codepipeline_s3_source_policy" {
+  count = local.vcs.is_s3 ? 1 : 0
+  name  = "ct-aft-codepipeline-account-request-s3-source-policy"
+  role  = aws_iam_role.account_request_codepipeline_role.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect":"Allow",
+      "Action": [
+        "s3:GetObject",
+				"s3:GetObjectVersion",
+				"s3:GetBucketVersioning",
+				"s3:List*"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.account_request[0].bucket}/${local.s3_archive_filename}"
+      ]
+    }
+  ]
+}
+EOF
+}
+
+
 resource "aws_iam_role" "account_provisioning_customizations_codepipeline_role" {
   name               = "ct-aft-codepipeline-account-provisioning-customizations-role"
   assume_role_policy = templatefile("${path.module}/iam/trust-policies/codepipeline.tpl", { none = "none" })
@@ -117,7 +144,7 @@ resource "time_sleep" "iam_eventual_consistency" {
 # CloudWatch Events Role
 
 resource "aws_iam_role" "cloudwatch_events_codepipeline_role" {
-  count              = local.vcs.is_codecommit ? 1 : 0
+  count              = (local.vcs.is_codecommit || local.vcs.is_s3) ? 1 : 0
   name               = "ct-aft-cwe-codepipeline-role"
   assume_role_policy = templatefile("${path.module}/iam/trust-policies/events.tpl", { none = "none" })
 }
