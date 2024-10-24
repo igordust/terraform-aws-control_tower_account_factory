@@ -192,13 +192,8 @@ variable "vcs_provider" {
   type        = string
   default     = "codecommit"
   validation {
-<<<<<<< HEAD
-    condition     = contains(["codecommit", "bitbucket", "github", "githubenterprise", "s3"], var.vcs_provider)
-    error_message = "Valid values for var: vcs_provider are (codecommit, bitbucket, github, githubenterprise, s3)."
-=======
     condition     = contains(["codecommit", "bitbucket", "github", "githubenterprise", "gitlab", "gitlabselfmanaged", "s3"], var.vcs_provider)
     error_message = "Valid values for var: vcs_provider are (codecommit, bitbucket, github, githubenterprise, gitlab, gitlabselfmanaged, s3)."
->>>>>>> merge_s3_release_3.12
   }
 }
 
