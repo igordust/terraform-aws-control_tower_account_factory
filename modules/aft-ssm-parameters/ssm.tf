@@ -387,21 +387,24 @@ resource "aws_ssm_parameter" "aft_metrics_reporting_uuid" {
 
 resource "aws_ssm_parameter" "account_request_s3_bucket" {
   name  = "/aft/config/account-request/source_s3_bucket"
-  value = var.account_request_s3_bucket
+  value = var.account_request_s3_bucket == null ? "" : var.account_request_s3_bucket
   type  = "String"
 }
+
 resource "aws_ssm_parameter" "account_provisioning_customizations_s3_bucket" {
   name  = "/aft/config/account-provisioning-customizations/source_s3_bucket"
-  value = var.account_provisioning_customizations_s3_bucket
+  value = var.account_provisioning_customizations_s3_bucket == null ? "" : var.account_provisioning_customizations_s3_bucket
   type  = "String"
 }
+
 resource "aws_ssm_parameter" "global_customizations_s3_bucket" {
   name  = "/aft/config/global-customizations/source_s3_bucket"
-  value = var.global_customizations_s3_bucket
+  value = var.global_customizations_s3_bucket == null ? "" : var.global_customizations_s3_bucket
   type  = "String"
 }
+
 resource "aws_ssm_parameter" "account_customizations_s3_bucket" {
   name  = "/aft/config/account-customizations/source_s3_bucket"
-  value = var.account_customizations_s3_bucket
+  value = var.account_customizations_s3_bucket == null ? "" : var.account_customizations_s3_bucket
   type  = "String"
 }
