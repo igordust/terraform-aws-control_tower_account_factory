@@ -6,17 +6,17 @@ output "codestar_connection_arn" {
 }
 
 output "global_customizations_s3_bucket" {
-  value = aws_s3_bucket.global_customizations[0].bucket
+  value = try(aws_s3_bucket.global_customizations[0].bucket, null)
 }
 
 output "account_customizations_s3_bucket" {
-  value = aws_s3_bucket.account_customizations[0].bucket
+  value = try(aws_s3_bucket.account_customizations[0].bucket, null)
 }
 
 output "account_request_s3_bucket" {
-  value = aws_s3_bucket.account_request[0].bucket
+  value = try(aws_s3_bucket.account_request[0].bucket, null)
 }
 
 output "account_provisioning_customizations_s3_bucket" {
-  value = aws_s3_bucket.account_provisioning_customizations[0].bucket
+  value = try(aws_s3_bucket.account_provisioning_customizations[0].bucket, null)
 }
