@@ -10,8 +10,10 @@ data "local_file" "python_version" {
 }
 
 data "aws_ssm_parameters_by_path" "servicecatalog_regional_data" {
-  count = data.aws_partition.current.partition == "aws" ? 1 : 0
-  path  = "/aws/service/global-infrastructure/services/servicecatalog/regions"
+  provider = aws.ct_management_us_east_1
+  count    = data.aws_partition.current.partition == "aws" ? 1 : 0
+
+  path = "/aws/service/global-infrastructure/services/servicecatalog/regions"
 }
 
 data "aws_service" "home_region_validation" {
