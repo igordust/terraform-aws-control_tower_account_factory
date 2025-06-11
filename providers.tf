@@ -19,7 +19,7 @@ provider "aws" {
 
   default_tags {
     tags = {
-      tags = local.aft_tags
+      managed_by = "AFT"
     }
   }
 }
