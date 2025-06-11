@@ -11,6 +11,20 @@ provider "aws" {
 }
 
 provider "aws" {
+  # if you're using an opt-in region, public parameters aren't available, 
+  # for this reason we use an alias with us-east-1 region, that should always be available
+
+  alias  = "ct_management_us_east_1"
+  region = "us-east-1"
+
+  default_tags {
+    tags = {
+      managed_by = "AFT"
+    }
+  }
+}
+
+provider "aws" {
   alias  = "aft_management"
   region = var.ct_home_region
   assume_role {
