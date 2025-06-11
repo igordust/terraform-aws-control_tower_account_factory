@@ -18,9 +18,7 @@ provider "aws" {
   region = "us-east-1"
 
   default_tags {
-    tags = {
-      managed_by = "AFT"
-    }
+    tags = local.aft_tags
   }
 }
 
